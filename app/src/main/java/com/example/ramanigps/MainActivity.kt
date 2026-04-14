@@ -105,9 +105,8 @@ class MainActivity : ComponentActivity(), LocationListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun checkPermissions() {
-        val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS)
+        val permissions = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS) else arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 
         if(permissions.all{ checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }) {
             startGps()

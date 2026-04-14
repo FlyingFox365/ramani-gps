@@ -14,11 +14,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import com.example.ramanigps.ui.theme.RamaniGPSTheme
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.Style
@@ -37,12 +44,14 @@ class MainActivity : ComponentActivity(), LocationListener {
     
     val viewModel: GPSViewModel by viewModels()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkPermissions()
         setContent {
             RamaniGPSTheme {
                 var latLng by remember { mutableStateOf(LatLng(50.9, -1.4))}
+                var dialogVisible by remember { mutableStateOf(false) }
                 viewModel.latLngLiveData.observe(this) {
                     latLng = it
                 }
@@ -59,7 +68,28 @@ class MainActivity : ComponentActivity(), LocationListener {
                         center=latLng,
                         radius=20f,
                         opacity=0.3f,
-                        color="#0000ff"
+                        color="#0000ff",
+                        onClick = {
+                            dialogVisible = true
+                        }
+                    )
+                }
+
+                if (dialogVisible) {
+                    AlertDialog(
+                        title = { Text("Alert") },
+                        text = { Text("Marker represents current position") },
+                        onDismissRequest = { dialogVisible = false },
+                        dismissButton = {
+                            Button(onClick = {
+                                dialogVisible = false
+                            }) { Text("Dismiss") }
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                dialogVisible = false
+                            }) { Text("Confirm") }
+                        }
                     )
                 }
             }
